@@ -1,0 +1,167 @@
+Q1. WRITE A PROGRAM TO IMPLEMENT SINGLE FORK SYSTEM CALL .
+
+
+
+
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main()
+{
+    pid_t child_pid = fork();
+    
+    if (child_pid == 0){
+        
+        printf(" child process (PID : %d ) with parent PID : %d\n" , getpid() , getppid());
+    }else if (child_pid > 0){
+        
+        printf(" Parent process (PID : %d)\n", getpid());
+        
+    }else {
+        
+        printf(" Fork failed \n");
+        return 1;
+    }
+    
+    
+    return 0;
+    
+}
+
+
+
+
+Q2. WRITE A PROGRAM TO IMPLEMENT MULTIPLE FORK SYSTEM CALL .
+
+
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main()
+{
+   
+    int num_processes = 5;
+    
+    printf(" Parent process (PID : %d)\n", getpid());
+    
+    for(int i=0 ; i< num_processes ; i++){
+        pid_t child_pid = fork();
+        
+        if (child_pid == 0)
+        {
+        
+            printf(" child process (PID : %d ) with parent PID : %d\n" ,i+1,  getpid() , getppid());
+            return 0;
+        }
+        else if (child_pid < 0)
+        {
+            
+            printf(" fork failed ");
+            return 1;
+            
+        }
+        for(int i=0 ; i< num_processes ; i++){
+            wait(NULL);
+        }
+        
+        
+    }
+    
+    
+    
+    return 0;
+    
+}
+
+
+
+
+
+
+
+Q3. WRITE A PROGRAM TO PRINT SUM OF EVEN NO. IN CHILD PROCESS AND SUM OF ODD NO. IN PARENT PIC.
+
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main()
+{
+   
+    
+    int start=1;
+    int end=10;
+    
+    pid_t child_pid = fork();
+    
+    
+        
+        if (child_pid == 0)
+        {
+            int even_sum = 0;
+            for( int i = start; i < end ; i++ ){
+                if(i%2 == 0 ){
+                    
+                    even_sum +=1;
+                    
+                }
+            }
+        
+            printf(" child process (PID : %d ) - Sum of even numbers  : %d\n" ,  getpid() , even_sum);
+        
+        }
+        else if (child_pid > 0)
+        {
+            int odd_sum = 0;
+            for(int i= start; i<=end; i++){
+                if(i%2 != 0){
+                    odd_sum +=1;
+                    
+                }
+            }
+            
+            
+            printf(" Parent  process (PID : %d ) - Sum of odd numbers  : %d\n" ,  getpid() , odd_sum);
+            
+            
+        }else{
+            printf(" FORK FAILED ");
+            return 1;
+        }
+        
+        
+        
+        
+    
+    
+    
+    
+    return 0;
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
