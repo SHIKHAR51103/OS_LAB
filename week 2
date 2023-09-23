@@ -120,6 +120,133 @@ int main() {
 
 
 
+Q3.WRITE A C PROGRAM TO IMPLEMENT FIRST COME FIRST SERVE SCHEDULING ALGORITHM .
+
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int arrivalTime;
+    int burstTime;
+    int waitingTime;
+    int turnaroundTime;
+};
+
+void calculateTimes(struct Process p[], int n) {
+    p[0].waitingTime = 0;
+    p[0].turnaroundTime = p[0].burstTime;
+
+    for (int i = 1; i < n; i++) {
+        p[i].waitingTime = p[i - 1].waitingTime + p[i - 1].burstTime;
+        p[i].turnaroundTime = p[i].waitingTime + p[i].burstTime;
+    }
+}
+
+void displayTable(struct Process p[], int n) {
+    printf("Process\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t%d\t\t%d\t\t%d\t\t%d\n",
+               p[i].id, p[i].arrivalTime,
+               p[i].burstTime, p[i].waitingTime,
+               p[i].turnaroundTime);
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the number of process : ");
+    scanf("%d", &n);
+
+    struct Process p[n];
+
+    for (int i = 0; i < n; i++) {
+        p[i].id = i + 1;
+        printf("Enter arrival time for process %d: ", i + 1);
+        scanf("%d", &p[i].arrivalTime);
+        printf("Enter burst time for process %d: ", i + 1);
+        scanf("%d", &p[i].burstTime);
+    }
+
+    calculateTimes(p, n);
+    displayTable(p, n);
+
+    return 0;
+}
+
+
+Q4. WRITE A C PROGRAM TO IMPLEMENT SHORTEST JOB FIRST ALGORITHM.
+
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int arrivalTime;
+    int burstTime;
+    int waitingTime;
+    int turnaroundTime;
+};
+
+void swap(struct Process *a, struct Process *b) {
+    struct Process temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void sortprocesses(struct Process p[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (p[j].burstTime > p[j + 1].burstTime) {
+                swap(&p[j], &p[j + 1]);
+            }
+        }
+    }
+}
+
+void calculateTimes(struct Process p[], int n) {
+    p[0].waitingTime = 0;
+    p[0].turnaroundTime = p[0].burstTime;
+
+    for (int i = 1; i < n; i++) {
+        p[i].waitingTime = p[i - 1].waitingTime + p[i - 1].burstTime;
+        p[i].turnaroundTime = p[i].waitingTime + p[i].burstTime;
+    }
+}
+
+void displayTable(struct Process p[], int n) {
+    printf("Process\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t%d\t\t%d\t\t%d\t\t%d\n",
+               p[i].id, p[i].arrivalTime,
+               p[i].burstTime, p[i].waitingTime,
+               p[i].turnaroundTime);
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the number of p: ");
+    scanf("%d", &n);
+
+    struct Process p[n];
+
+    for (int i = 0; i < n; i++) {
+        p[i].id = i + 1;
+        printf("Enter arrival time for process %d: ", i + 1);
+        scanf("%d", &p[i].arrivalTime);
+        printf("Enter burst time for process %d: ", i + 1);
+        scanf("%d", &p[i].burstTime);
+    }
+
+    sortp(p, n);
+    calculateTimes(p, n);
+    displayTable(p, n);
+
+    return 0;
+}
+
+
+
+
 
 
 
