@@ -1,0 +1,404 @@
+Q1. WRITE A PROGRAM TO IMPLEMENT SINGLE FORK SYSTEM CALL .
+
+
+
+
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main()
+{
+    pid_t child_pid = fork();
+    
+    if (child_pid == 0){
+        
+        printf(" child process (PID : %d ) with parent PID : %d\n" , getpid() , getppid());
+    }else if (child_pid > 0){
+        
+        printf(" Parent process (PID : %d)\n", getpid());
+        
+    }else {
+        
+        printf(" Fork failed \n");
+        return 1;
+    }
+    
+    
+    return 0;
+    
+}
+
+
+
+
+Q2. WRITE A PROGRAM TO IMPLEMENT MULTIPLE FORK SYSTEM CALL .
+
+
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main()
+{
+   
+    int num_processes = 5;
+    
+    printf(" Parent process (PID : %d)\n", getpid());
+    
+    for(int i=0 ; i< num_processes ; i++){
+        pid_t child_pid = fork();
+        
+        if (child_pid == 0)
+        {
+        
+            printf(" child process (PID : %d ) with parent PID : %d\n" ,i+1,  getpid() , getppid());
+            return 0;
+        }
+        else if (child_pid < 0)
+        {
+            
+            printf(" fork failed ");
+            return 1;
+            
+        }
+        for(int i=0 ; i< num_processes ; i++){
+            wait(NULL);
+        }
+        
+        
+    }
+    
+    
+    
+    return 0;
+    
+}
+
+
+
+
+
+
+
+Q3. WRITE A PROGRAM TO PRINT SUM OF EVEN NO. IN CHILD PROCESS AND SUM OF ODD NO. IN PARENT PIC.
+
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main()
+{
+   
+    
+    int start=1;
+    int end=10;
+    
+    pid_t child_pid = fork();
+    
+    
+        
+        if (child_pid == 0)
+        {
+            int even_sum = 0;
+            for( int i = start; i < end ; i++ ){
+                if(i%2 == 0 ){
+                    
+                    even_sum +=1;
+                    
+                }
+            }
+        
+            printf(" child process (PID : %d ) - Sum of even numbers  : %d\n" ,  getpid() , even_sum);
+        
+        }
+        else if (child_pid > 0)
+        {
+            int odd_sum = 0;
+            for(int i= start; i<=end; i++){
+                if(i%2 != 0){
+                    odd_sum +=1;
+                    
+                }
+            }
+            
+            
+            printf(" Parent  process (PID : %d ) - Sum of odd numbers  : %d\n" ,  getpid() , odd_sum);
+            
+            
+        }else{
+            printf(" FORK FAILED ");
+            return 1;
+        }
+        
+        
+        
+        
+    
+    
+    
+    
+    return 0;
+    
+}
+
+
+
+
+
+
+Q1. WRITE A C PROGRAM TO IMPLEMENT ORPHAN PROCESS.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    pid_t child_pid =fork();
+    
+    if (child_pid == 0){
+        printf(" CHILD PROCESS  ( PID : %d ) WITH PARENT PID : %d\n " , getpid(), getppid());
+        sleep(2);
+        printf(" CHILD PROCESS  (PID : %d )  EXITING\n", getpid());
+    }
+    else if (child_pid > 0)
+    {
+        printf(" PARENT PROCESS (PID : %d) ", getpid());
+        sleep(1);
+        printf("PARENT PROCESS (PID : %d) EXITING ", getpid());
+        
+    }
+    else{
+        
+        printf(" FORK FAILED \n");
+        return 1;
+    }
+    
+    return 0;
+}
+
+
+
+Q2. WRITE A C PROGRAM TO IMPLEMENT ZOMBIE PROCESS .
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    pid_t child_pid =fork();
+    
+    if (child_pid == 0){
+        printf(" CHILD PROCESS  ( PID : %d ) WITH PARENT PID : %d\n " , getpid(), getppid());
+        printf(" CHILD PROCESS EXITING\n");
+    }
+    else if (child_pid > 0)
+    {
+        printf(" PARENT PROCESS (PID : %d) ", getpid());
+        sleep(2);
+        printf("PARENT PROCESS (PID : %d) EXITING ", getpid());
+        
+    }
+    else{
+        
+        printf(" FORK FAILED \n");
+        return 1;
+    }
+    
+    return 0;
+}
+
+
+
+Q3. WRITE A C PROGRAM TO IMPLEMENT FIRST - COME - FIRST - SERVE SCHEDULING ALGORITHM . 
+
+#include <stdio.h>
+
+struct Process{
+    int id;
+    int arrivalTime;
+    int burstTime;
+    int waitingTime;
+    int turnaroundTime;
+};
+
+void calculateTimes(struct Process p[] , int n){
+    p[0].waitingTime=0;
+    p[0].turnaroundTime = p[0].burstTime;
+    
+    for(int i=1 ; i<n ; i++){
+        p[i].waitingTime = p[i-1].waitingTime + p[i-1].burstTime;
+        p[i].turnaroundTime = p[i].waitingTime + p[i].burstTime;
+    }
+}
+
+void displayTable(struct Process p[] , int n){
+    printf("Process\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n ");
+    for(int i=0 ; i < n; i++){
+        printf(" %d\t%d\t\t%d\t\t%d\n", p[i].id , p[i].arrivalTime , p[i].burstTime , p[i].waitingTime , p[i].turnaroundTime );
+        
+    }
+}
+
+
+int main() {
+    int n;
+    printf(" ENTER THE NO. OF PROCESSES :  : ");
+    scanf("%d" , &n);
+    
+    
+    struct Process p[n];
+    
+    for(int i=0 ; i < n ; i++)
+    {
+        p[i].id=i+1;
+        printf("  ENTER ARRIVAL TIME FOR PROCESS %d: ", i + 1);
+        scanf("%d" , &p[i].arrivalTime);
+        printf(" ENTER BURST TIME FOR PROCESS %d :" , i+1 );
+        scanf("%d" ,&p[i].burstTime);
+    }
+    
+    calculateTimes(p,n);
+    displayTable(p,n);
+    
+    
+    return 0;
+}
+
+
+
+Q3.WRITE A C PROGRAM TO IMPLEMENT FIRST COME FIRST SERVE SCHEDULING ALGORITHM .
+
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int arrivalTime;
+    int burstTime;
+    int waitingTime;
+    int turnaroundTime;
+};
+
+void calculateTimes(struct Process p[], int n) {
+    p[0].waitingTime = 0;
+    p[0].turnaroundTime = p[0].burstTime;
+
+    for (int i = 1; i < n; i++) {
+        p[i].waitingTime = p[i - 1].waitingTime + p[i - 1].burstTime;
+        p[i].turnaroundTime = p[i].waitingTime + p[i].burstTime;
+    }
+}
+
+void displayTable(struct Process p[], int n) {
+    printf("Process\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t%d\t\t%d\t\t%d\t\t%d\n",
+               p[i].id, p[i].arrivalTime,
+               p[i].burstTime, p[i].waitingTime,
+               p[i].turnaroundTime);
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the number of process : ");
+    scanf("%d", &n);
+
+    struct Process p[n];
+
+    for (int i = 0; i < n; i++) {
+        p[i].id = i + 1;
+        printf("Enter arrival time for process %d: ", i + 1);
+        scanf("%d", &p[i].arrivalTime);
+        printf("Enter burst time for process %d: ", i + 1);
+        scanf("%d", &p[i].burstTime);
+    }
+
+    calculateTimes(p, n);
+    displayTable(p, n);
+
+    return 0;
+}
+
+
+Q4. WRITE A C PROGRAM TO IMPLEMENT SHORTEST JOB FIRST ALGORITHM.
+
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int arrivalTime;
+    int burstTime;
+    int waitingTime;
+    int turnaroundTime;
+};
+
+void swap(struct Process *a, struct Process *b) {
+    struct Process temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void sortprocesses(struct Process p[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (p[j].burstTime > p[j + 1].burstTime) {
+                swap(&p[j], &p[j + 1]);
+            }
+        }
+    }
+}
+
+void calculateTimes(struct Process p[], int n) {
+    p[0].waitingTime = 0;
+    p[0].turnaroundTime = p[0].burstTime;
+
+    for (int i = 1; i < n; i++) {
+        p[i].waitingTime = p[i - 1].waitingTime + p[i - 1].burstTime;
+        p[i].turnaroundTime = p[i].waitingTime + p[i].burstTime;
+    }
+}
+
+void displayTable(struct Process p[], int n) {
+    printf("Process\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t%d\t\t%d\t\t%d\t\t%d\n",
+               p[i].id, p[i].arrivalTime,
+               p[i].burstTime, p[i].waitingTime,
+               p[i].turnaroundTime);
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the number of p: ");
+    scanf("%d", &n);
+
+    struct Process p[n];
+
+    for (int i = 0; i < n; i++) {
+        p[i].id = i + 1;
+        printf("Enter arrival time for process %d: ", i + 1);
+        scanf("%d", &p[i].arrivalTime);
+        printf("Enter burst time for process %d: ", i + 1);
+        scanf("%d", &p[i].burstTime);
+    }
+
+    sortp(p, n);
+    calculateTimes(p, n);
+    displayTable(p, n);
+
+    return 0;
+}
