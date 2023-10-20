@@ -1,0 +1,126 @@
+Q1. WRITE A C  PROGRAM TO IMPLEMENT PRIORITY SCHEDULING.
+
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int priority;
+    int burstTime;
+    int waitingTime;
+    int turnaroundTime;
+};
+
+void swap(struct Process *a, struct Process *b) {
+    struct Process temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void sortProcesses(struct Process processes[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (processes[j].priority > processes[j + 1].priority) {
+                swap(&processes[j], &processes[j + 1]);
+            }
+        }
+    }
+}
+
+void calculateTimes(struct Process processes[], int n) {
+    processes[0].waitingTime = 0;
+    processes[0].turnaroundTime = processes[0].burstTime;
+
+    for (int i = 1; i < n; i++) {
+        processes[i].waitingTime = processes[i - 1].waitingTime + processes[i - 1].burstTime;
+        processes[i].turnaroundTime = processes[i].waitingTime + processes[i].burstTime;
+    }
+}
+
+void displayTable(struct Process processes[], int n) {
+    printf("Process\tPriority\tBurst Time\tWaiting Time\tTurnaround Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t%d\t\t%d\t\t%d\t\t%d\n",
+               processes[i].id, processes[i].priority,
+               processes[i].burstTime, processes[i].waitingTime,
+               processes[i].turnaroundTime);
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    struct Process processes[n];
+
+    for (int i = 0; i < n; i++) {
+        processes[i].id = i + 1;
+        printf("Enter priority for process %d: ", i + 1);
+        scanf("%d", &processes[i].priority);
+        printf("Enter burst time for process %d: ", i + 1);
+        scanf("%d", &processes[i].burstTime);
+    }
+
+    sortProcesses(processes, n);
+    calculateTimes(processes, n);
+    displayTable(processes, n);
+
+    return 0;
+}
+
+
+
+
+
+Q2. WRITE A C PROGRAM TO IMPLEMENT ROUND ROBIN SCHEDULING.
+
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int burstTime;
+    int remainingTime;
+};
+
+void roundRobinScheduling(struct Process processes[], int n, int quantum) {
+    int currentTime = 0;
+    int completed = 0;
+
+    while (completed < n) {
+        for (int i = 0; i < n; i++) {
+            if (processes[i].remainingTime > 0) {
+                if (processes[i].remainingTime <= quantum) {
+                    currentTime += processes[i].remainingTime;
+                    processes[i].remainingTime = 0;
+                    printf("Process %d completed at time %d\n", processes[i].id, currentTime);
+                    completed++;
+                } else {
+                    currentTime += quantum;
+                    processes[i].remainingTime -= quantum;
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    int n, quantum;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    printf("Enter the time quantum: ");
+    scanf("%d", &quantum);
+
+    struct Process processes[n];
+
+    for (int i = 0; i < n; i++) {
+        processes[i].id = i + 1;
+        printf("Enter burst time for process %d: ", i + 1);
+        scanf("%d", &processes[i].burstTime);
+        processes[i].remainingTime = processes[i].burstTime;
+    }
+
+    roundRobinScheduling(processes, n, quantum);
+
+    return 0;
+}
