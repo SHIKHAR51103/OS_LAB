@@ -88,3 +88,76 @@ int main() {
 
 
 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+Q2. WRITE A C PROGRAM TO  WRITE AND READ TWO MESSAGESS THROUHG THE PIPE USING THE PARENT AND CHILD PROCESS .
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+int main() {
+    int pipe_fd[2];  // File descriptors for the pipe
+    pid_t child_pid;
+
+    char message1[] = "Hello from parent!";
+    char message2[] = "Hello from child!";
+    char buffer[100];  // Buffer to store the received message
+
+    // Step 1: Create a pipe
+    if (pipe(pipe_fd) == -1) {
+        perror("Pipe creation failed");
+        exit(1);
+    }
+
+    // Step 2: Create a child process
+    child_pid = fork();
+
+    if (child_pid == -1) {
+        perror("Fork failed");
+        exit(1);
+    }
+
+    if (child_pid == 0) {
+        // Child process
+        close(pipe_fd[1]);  // Close the write end of the pipe (child only reads)
+
+        // Step 4: Child retrieves the message from the pipe and writes it to the standard output
+        read(pipe_fd[0], buffer, sizeof(buffer));
+        printf("Child: Received message - %s\n", buffer);
+
+        read(pipe_fd[0], buffer, sizeof(buffer));
+        printf("Child: Received message - %s\n", buffer);
+
+        close(pipe_fd[0]);
+    } else {
+        // Parent process
+        close(pipe_fd[0]);  // Close the read end of the pipe (parent only writes)
+
+        // Step 3: Parent process writes to the pipe
+        write(pipe_fd[1], message1, strlen(message1) + 1);
+        printf("Parent: Sent message - %s\n", message1);
+
+        write(pipe_fd[1], message2, strlen(message2) + 1);
+        printf("Parent: Sent message - %s\n", message2);
+
+        close(pipe_fd[1]);
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
+
