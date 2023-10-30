@@ -1,0 +1,90 @@
+Q1. WRITE A C PROGRAM TO IMPLEMENT SRTF SCHEDULING ALGORITHM .
+
+#include <stdio.h>
+
+struct Process {
+    int process_id;
+    int arrival_time;
+    int burst_time;
+    int remaining_time;
+    int completion_time;
+    int turnaround_time;
+    int waiting_time;
+};
+
+void findWaitingTime(struct Process p[], int n) {
+    int currentTime = 0;
+    int completed = 0;
+
+    while (completed < n) {
+        int shortest = -1;
+        int shortestTime = 9999;
+
+        for (int i = 0; i < n; i++) {
+            if (p[i].arrival_time <= currentTime && p[i].remaining_time < shortestTime && p[i].remaining_time > 0) {
+                shortest = i;
+                shortestTime = p[i].remaining_time;
+            }
+        }
+
+        if (shortest == -1) {
+            currentTime++;
+        } else {
+            p[shortest].remaining_time--;
+            currentTime++;
+
+            if (p[shortest].remaining_time == 0) {
+                completed++;
+                p[shortest].completion_time = currentTime;
+                p[shortest].turnaround_time = p[shortest].completion_time - p[shortest].arrival_time;
+                p[shortest].waiting_time = p[shortest].turnaround_time - p[shortest].burst_time;
+            }
+        }
+    }
+}
+
+void findTurnaroundTime(struct Process p[], int n) {
+    for (int i = 0; i < n; i++) {
+        p[i].turnaround_time = p[i].completion_time - p[i].arrival_time;
+    }
+}
+
+void findAverageTime(struct Process p[], int n) {
+    findWaitingTime(p, n);
+    findTurnaroundTime(p, n);
+
+    float totalWaitingTime = 0, totalTurnaroundTime = 0;
+
+    for (int i = 0; i < n; i++) {
+        totalWaitingTime += p[i].waiting_time;
+        totalTurnaroundTime += p[i].turnaround_time;
+    }
+
+    printf("Average Waiting Time: %.2f\n", totalWaitingTime / n);
+    printf("Average Turnaround Time: %.2f\n", totalTurnaroundTime / n);
+}
+
+int main() {
+    int n;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    struct Process p[n];
+
+    for (int i = 0; i < n; i++) {
+        p[i].process_id = i + 1;
+        printf("Enter arrival time for process %d: ", i + 1);
+        scanf("%d", &p[i].arrival_time);
+        printf("Enter burst time for process %d: ", i + 1);
+        scanf("%d", &p[i].burst_time);
+        p[i].remaining_time = p[i].burst_time;
+    }
+
+    findAverageTime(p, n);
+
+    return 0;
+}
+
+
+
+
