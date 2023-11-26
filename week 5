@@ -1,0 +1,512 @@
+1. WRITE A PROGRAM TO IMPLEMENT FCFS DISK SCHEDULING ALGORITHM .
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+
+#define MAX_REQUESTS 100
+
+void fcfs_disk_scheduling(int requests[], int num_requests, int initial_position);
+
+int main() {
+    int requests[MAX_REQUESTS];
+    int num_requests, initial_position;
+
+    // Input the number of requests
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &num_requests);
+
+    if (num_requests <= 0 || num_requests > MAX_REQUESTS) {
+        printf("Invalid number of requests. Exiting...\n");
+        return 1;
+    }
+
+    // Input the requests
+    printf("Enter the disk requests (tracks): ");
+    for (int i = 0; i < num_requests; ++i) {
+        scanf("%d", &requests[i]);
+    }
+
+    // Input the initial position of the disk head
+    printf("Enter the initial position of the disk head: ");
+    scanf("%d", &initial_position);
+
+    // Perform FCFS disk scheduling
+    fcfs_disk_scheduling(requests, num_requests, initial_position);
+
+    return 0;
+}
+
+void fcfs_disk_scheduling(int requests[], int num_requests, int initial_position) {
+    int total_head_movements = 0;
+
+    printf("\nFCFS Disk Scheduling:\n");
+    printf("Initial Head Position: %d\n", initial_position);
+    printf("Sequence of head movements: %d", initial_position);
+
+    // Calculate head movements
+    for (int i = 0; i < num_requests; ++i) {
+        int movement = abs(requests[i] - initial_position);
+        total_head_movements += movement;
+        initial_position = requests[i];
+        printf(" -> %d", initial_position);
+    }
+
+    printf("\nTotal head movements: %d\n", total_head_movements);
+}
+
+
+
+OUTPUT : 
+[?2004l
+Enter the number of disk requests: 5
+Enter the disk requests (tracks): 98 183 37 122 14
+Enter the initial position of the disk head: 53
+
+FCFS Disk Scheduling:
+Initial Head Position: 53
+Sequence of head movements: 53 -> 98 -> 183 -> 37 -> 122 -> 14
+Total head movements: 469
+[?2004h
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+2. WRITE A PROGRAM TO SCAN  SCHEDULING ALGORITHM.
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_REQUESTS 100
+
+void scan_disk_scheduling(int requests[], int num_requests, int initial_position);
+
+int main() {
+    int requests[MAX_REQUESTS];
+    int num_requests, initial_position;
+
+    // Input the number of requests
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &num_requests);
+
+    if (num_requests <= 0 || num_requests > MAX_REQUESTS) {
+        printf("Invalid number of requests. Exiting...\n");
+        return 1;
+    }
+
+    // Input the requests
+    printf("Enter the disk requests (tracks): ");
+    for (int i = 0; i < num_requests; ++i) {
+        scanf("%d", &requests[i]);
+    }
+
+    // Input the initial position of the disk head
+    printf("Enter the initial position of the disk head: ");
+    scanf("%d", &initial_position);
+
+    // Perform SCAN disk scheduling
+    scan_disk_scheduling(requests, num_requests, initial_position);
+
+    return 0;
+}
+
+void scan_disk_scheduling(int requests[], int num_requests, int initial_position) {
+    int total_head_movements = 0;
+
+    // Sorting the requests for SCAN
+    for (int i = 0; i < num_requests - 1; ++i) {
+        for (int j = 0; j < num_requests - i - 1; ++j) {
+            if (requests[j] > requests[j + 1]) {
+                // Swap the requests
+                int temp = requests[j];
+                requests[j] = requests[j + 1];
+                requests[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\nSCAN Disk Scheduling:\n");
+    printf("Initial Head Position: %d\n", initial_position);
+    printf("Sequence of head movements: %d", initial_position);
+
+    int direction = 1;  // 1 for moving towards higher tracks, -1 for lower tracks
+
+    // Find the index where the initial position is located
+    int start_index = 0;
+    for (int i = 0; i < num_requests; ++i) {
+        if (requests[i] >= initial_position) {
+            start_index = i;
+            break;
+        }
+    }
+
+    // Traverse the requests in the appropriate direction
+    for (int i = start_index; i < num_requests && i >= 0; i += direction) {
+        int movement = abs(requests[i] - initial_position);
+        total_head_movements += movement;
+        initial_position = requests[i];
+        printf(" -> %d", initial_position);
+    }
+
+    // Change direction and continue scanning
+    direction *= -1;
+    for (int i = start_index + direction; i < num_requests && i >= 0; i += direction) {
+        int movement = abs(requests[i] - initial_position);
+        total_head_movements += movement;
+        initial_position = requests[i];
+        printf(" -> %d", initial_position);
+    }
+
+    printf("\nTotal head movements: %d\n", total_head_movements);
+}
+
+
+
+OUTPUT :
+[?2004l
+Enter the number of disk requests: 8
+Enter the disk requests (tracks): 98 183 37 122 14 124 65 67
+Enter the initial position of the disk head: 53
+
+SCAN Disk Scheduling:
+Initial Head Position: 53
+Sequence of head movements: 53 -> 65 -> 67 -> 98 -> 122 -> 124 -> 183 -> 37 -> 14
+Total head movements: 299
+[?2004h
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+3. WRITE A PROGRAM TO IMPLEMENT C-SCAN ALGORITHM .
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_REQUESTS 100
+
+void cscan_disk_scheduling(int requests[], int num_requests, int initial_position);
+
+int main() {
+    int requests[MAX_REQUESTS];
+    int num_requests, initial_position;
+
+    // Input the number of requests
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &num_requests);
+
+    if (num_requests <= 0 || num_requests > MAX_REQUESTS) {
+        printf("Invalid number of requests. Exiting...\n");
+        return 1;
+    }
+
+    // Input the requests
+    printf("Enter the disk requests (tracks): ");
+    for (int i = 0; i < num_requests; ++i) {
+        scanf("%d", &requests[i]);
+    }
+
+    // Input the initial position of the disk head
+    printf("Enter the initial position of the disk head: ");
+    scanf("%d", &initial_position);
+
+    // Perform C-SCAN disk scheduling
+    cscan_disk_scheduling(requests, num_requests, initial_position);
+
+    return 0;
+}
+
+void cscan_disk_scheduling(int requests[], int num_requests, int initial_position) {
+    int total_head_movements = 0;
+
+    // Sorting the requests for C-SCAN
+    for (int i = 0; i < num_requests - 1; ++i) {
+        for (int j = 0; j < num_requests - i - 1; ++j) {
+            if (requests[j] > requests[j + 1]) {
+                // Swap the requests
+                int temp = requests[j];
+                requests[j] = requests[j + 1];
+                requests[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\nC-SCAN Disk Scheduling:\n");
+    printf("Initial Head Position: %d\n", initial_position);
+    printf("Sequence of head movements: %d", initial_position);
+
+    // Find the index where the initial position is located
+    int start_index = 0;
+    for (int i = 0; i < num_requests; ++i) {
+        if (requests[i] >= initial_position) {
+            start_index = i;
+            break;
+        }
+    }
+
+    // Traverse the requests in the forward direction
+    for (int i = start_index; i < num_requests; ++i) {
+        int movement = abs(requests[i] - initial_position);
+        total_head_movements += movement;
+        initial_position = requests[i];
+        printf(" -> %d", initial_position);
+    }
+
+    // Move to the beginning of the disk
+    total_head_movements += (initial_position - 0);
+    initial_position = 0;
+    printf(" -> 0");
+
+    // Traverse the requests in the forward direction (skipping the initial position)
+    for (int i = 0; i < start_index; ++i) {
+        int movement = abs(requests[i] - initial_position);
+        total_head_movements += movement;
+        initial_position = requests[i];
+        printf(" -> %d", initial_position);
+    }
+
+    printf("\nTotal head movements: %d\n", total_head_movements);
+}
+
+
+
+
+OUTPUT :
+Enter the number of disk requests: 8
+Enter the disk requests (tracks): 98 183 37 122 14 124 65 67
+Enter the initial position of the disk head: 53
+
+C-SCAN Disk Scheduling:
+Initial Head Position: 53
+Sequence of head movements: 53 -> 65 -> 67 -> 98 -> 122 -> 124 -> 183 -> 0 -> 14 -> 37
+Total head movements: 350
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+4. WRITE A PROGRAM TO IMPLEMENT LOOK DISK SCHEDULING ALGORITHM .
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_REQUESTS 100
+
+void look_disk_scheduling(int requests[], int num_requests, int initial_position);
+
+int main() {
+    int requests[MAX_REQUESTS];
+    int num_requests, initial_position;
+
+    // Input the number of requests
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &num_requests);
+
+    if (num_requests <= 0 || num_requests > MAX_REQUESTS) {
+        printf("Invalid number of requests. Exiting...\n");
+        return 1;
+    }
+
+    // Input the requests
+    printf("Enter the disk requests (tracks): ");
+    for (int i = 0; i < num_requests; ++i) {
+        scanf("%d", &requests[i]);
+    }
+
+    // Input the initial position of the disk head
+    printf("Enter the initial position of the disk head: ");
+    scanf("%d", &initial_position);
+
+    // Perform LOOK disk scheduling
+    look_disk_scheduling(requests, num_requests, initial_position);
+
+    return 0;
+}
+
+void look_disk_scheduling(int requests[], int num_requests, int initial_position) {
+    int total_head_movements = 0;
+
+    // Sorting the requests for LOOK
+    for (int i = 0; i < num_requests - 1; ++i) {
+        for (int j = 0; j < num_requests - i - 1; ++j) {
+            if (requests[j] > requests[j + 1]) {
+                // Swap the requests
+                int temp = requests[j];
+                requests[j] = requests[j + 1];
+                requests[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\nLOOK Disk Scheduling:\n");
+    printf("Initial Head Position: %d\n", initial_position);
+    printf("Sequence of head movements: %d", initial_position);
+
+    // Find the index where the initial position is located
+    int start_index = 0;
+    for (int i = 0; i < num_requests; ++i) {
+        if (requests[i] >= initial_position) {
+            start_index = i;
+            break;
+        }
+    }
+
+    // Traverse the requests in the forward direction
+    for (int i = start_index; i < num_requests; ++i) {
+        int movement = abs(requests[i] - initial_position);
+        total_head_movements += movement;
+        initial_position = requests[i];
+        printf(" -> %d", initial_position);
+    }
+
+    // Traverse the requests in the reverse direction
+    for (int i = start_index - 1; i >= 0; --i) {
+        int movement = abs(requests[i] - initial_position);
+        total_head_movements += movement;
+        initial_position = requests[i];
+        printf(" -> %d", initial_position);
+    }
+
+    printf("\nTotal head movements: %d\n", total_head_movements);
+}
+
+
+
+
+
+OUTPUT :
+
+[?2004l
+Enter the number of disk requests: 8
+Enter the disk requests (tracks): 98 183 37 122 14 65 67
+124
+Enter the initial position of the disk head: 53
+
+LOOK Disk Scheduling:
+Initial Head Position: 53
+Sequence of head movements: 53 -> 65 -> 67 -> 98 -> 122 -> 124 -> 183 -> 37 -> 14
+Total head movements: 299
+[?2004h
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+5. WRITE A PROGRAM FOR C-LOOK SCAN SCHEDULING ALGORITHM .
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_REQUESTS 100
+
+void clook_disk_scheduling(int requests[], int num_requests, int initial_position);
+
+int main() {
+    int requests[MAX_REQUESTS];
+    int num_requests, initial_position;
+
+    // Input the number of requests
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &num_requests);
+
+    if (num_requests <= 0 || num_requests > MAX_REQUESTS) {
+        printf("Invalid number of requests. Exiting...\n");
+        return 1;
+    }
+
+    // Input the requests
+    printf("Enter the disk requests (tracks): ");
+    for (int i = 0; i < num_requests; ++i) {
+        scanf("%d", &requests[i]);
+    }
+
+    // Input the initial position of the disk head
+    printf("Enter the initial position of the disk head: ");
+    scanf("%d", &initial_position);
+
+    // Perform C-LOOK disk scheduling
+    clook_disk_scheduling(requests, num_requests, initial_position);
+
+    return 0;
+}
+
+void clook_disk_scheduling(int requests[], int num_requests, int initial_position) {
+    int total_head_movements = 0;
+
+    // Sorting the requests for C-LOOK
+    for (int i = 0; i < num_requests - 1; ++i) {
+        for (int j = 0; j < num_requests - i - 1; ++j) {
+            if (requests[j] > requests[j + 1]) {
+                // Swap the requests
+                int temp = requests[j];
+                requests[j] = requests[j + 1];
+                requests[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\nC-LOOK Disk Scheduling:\n");
+    printf("Initial Head Position: %d\n", initial_position);
+    printf("Sequence of head movements: %d", initial_position);
+
+    // Find the index where the initial position is located
+    int start_index = 0;
+    for (int i = 0; i < num_requests; ++i) {
+        if (requests[i] >= initial_position) {
+            start_index = i;
+            break;
+        }
+    }
+
+    // Traverse the requests in the forward direction
+    for (int i = start_index; i < num_requests; ++i) {
+        int movement = abs(requests[i] - initial_position);
+        total_head_movements += movement;
+        initial_position = requests[i];
+        printf(" -> %d", initial_position);
+    }
+
+    // Move to the beginning of the requests
+    total_head_movements += (requests[num_requests - 1] - requests[0]);
+    initial_position = requests[0];
+    printf(" -> %d", initial_position);
+
+    // Traverse the requests in the forward direction (skipping the initial position)
+    for (int i = 0; i < start_index; ++i) {
+        int movement = abs(requests[i] - initial_position);
+        total_head_movements += movement;
+        initial_position = requests[i];
+        printf(" -> %d", initial_position);
+    }
+
+    printf("\nTotal head movements: %d\n", total_head_movements);
+}
+
+
+
+
+OUTPUT :
+[?2004l
+Enter the number of disk requests: 8
+Enter the disk requests (tracks): 98 183 37 122 14 124 65 67 
+Enter the initial position of the disk head: 53
+
+C-LOOK Disk Scheduling:
+Initial Head Position: 53
+Sequence of head movements: 53 -> 65 -> 67 -> 98 -> 122 -> 124 -> 183 -> 14 -> 14 -> 37
+Total head movements: 322
+[?2004h
